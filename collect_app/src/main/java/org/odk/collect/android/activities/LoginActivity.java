@@ -21,30 +21,23 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.odk.collect.android.R;
 import org.odk.collect.android.application.Collect;
-import org.odk.collect.android.http.HttpHeadResult;
-import org.odk.collect.android.http.OpenRosaHttpInterface;
 import org.odk.collect.android.preferences.PreferenceKeys;
 import org.odk.collect.android.utilities.WebCredentialsUtils;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 import javax.inject.Inject;
-
-import timber.log.Timber;
 
 /**
  * Responsible for displaying buttons to launch the major activities. Launches
@@ -56,6 +49,7 @@ public class LoginActivity extends CollectAbstractActivity {
     private Button loginButton;
     private TextInputEditText usernameEditText;
     private TextInputEditText passwordEditText;
+    private TextView errorAuth;
 
     @Inject
     WebCredentialsUtils webCredentialsUtils;
@@ -73,71 +67,48 @@ public class LoginActivity extends CollectAbstractActivity {
 
         usernameEditText = findViewById(R.id.username_edit);
         passwordEditText = findViewById(R.id.password_edit);
+        errorAuth = findViewById(R.id.errorAuth);
         loginButton = findViewById(R.id.login);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-                //or set the values.
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(PreferenceKeys.KEY_USERNAME, usernameEditText.getText().toString()); //This is just an example, you could also put boolean, long, int or floats
-                editor.commit();
-
-                Collect.getInstance().getActivityLogger()
-                        .logAction(this, "login", "click");
-                Intent i = new Intent(getApplicationContext(),
-                        MainMenuActivity.class);
-                startActivity(i);
-                finish();
-
-                URI uri = URI.create(webCredentialsUtils.getServerFromPreferences());**/
-                new Login().execute("https://kc.kobotoolbox.org/formList");
+                errorAuth.setVisibility(View.GONE);
+                String username = usernameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                new LoginCheck(username, password).execute(
+                        getString(R.string.default_server_url) + "/formList");
             }
         });
     }
 
-    private String HttpPost(String myUrl) throws IOException, JSONException {
-
+    private String HttpLogin(String myUrl, String username, String password) throws IOException, JSONException {
         URL url = new URL(myUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-        Log.i(LoginActivity.class.toString(), conn.getRequestMethod());
-        JSONObject jsonObject = buidJsonObject();
-        setPostRequestContent(conn, jsonObject);
+        conn.setUseCaches(false);
+        byte[] usernamePassword = (username + ":" + password).getBytes();
+        byte[] basicAuth = Base64.encode(usernamePassword, Base64.DEFAULT);
+        String text = new String(basicAuth, "UTF-8");
+        conn.setRequestProperty("Authorization", "basic " + text);
         conn.connect();
-        Log.i(LoginActivity.class.toString(), conn.getResponseCode()+"");
         return conn.getResponseMessage() + "";
     }
 
-    private JSONObject buidJsonObject() throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.accumulate("username", usernameEditText.getText().toString());
-        jsonObject.accumulate("password", passwordEditText.getText().toString());
-        return jsonObject;
-    }
 
-    private void setPostRequestContent(
-            HttpURLConnection conn, JSONObject jsonObject) throws IOException {
-        OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-        writer.write(jsonObject.toString());
-        Log.i(LoginActivity.class.toString(), jsonObject.toString());
-        writer.flush();
-        writer.close();
-        os.close();
-    }
+    private class LoginCheck extends AsyncTask<String, Void, String> {
+        String username;
+        String password;
 
+        public LoginCheck(String inputUsername, String inputPassword) {
+            username = inputUsername;
+            password = inputPassword;
+        }
 
-    private class Login extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
             try {
                 try {
-                    return HttpPost(urls[0]);
+                    return HttpLogin(urls[0], username, password);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return "Error!";
@@ -149,6 +120,25 @@ public class LoginActivity extends CollectAbstractActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            if (result.equals("OK")) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                //or set the values.
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(PreferenceKeys.KEY_USERNAME, username);
+                editor.putString(PreferenceKeys.KEY_PASSWORD, password);
+                editor.putString(PreferenceKeys.KEY_SERVER_URL, getString(R.string.default_server_url));
+                editor.commit();
+
+                Collect.getInstance().getActivityLogger()
+                        .logAction(this, "login", "click");
+                Intent i = new Intent(getApplicationContext(),
+                        MainMenuActivity.class);
+                startActivity(i);
+                finish();
+            } else {
+                errorAuth.setVisibility(View.VISIBLE);
+            }
             Log.i(LoginActivity.class.toString(), result);
         }
     }

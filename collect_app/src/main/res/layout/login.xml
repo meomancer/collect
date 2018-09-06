@@ -70,8 +70,8 @@
                     android:id="@+id/username_edit"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:textSize="12dp"
-                    android:hint="@string/username" />
+                    android:hint="@string/username"
+                    android:textSize="12dp" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -99,11 +99,21 @@
                     android:id="@+id/password_edit"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:textSize="12dp"
                     android:hint="@string/password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textSize="12dp" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/errorAuth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/login_error"
+            android:visibility="gone"
+            android:textColor="@android:color/holo_red_dark" />
 
         <Button
             android:id="@+id/login"
