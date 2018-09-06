@@ -65,4 +65,10 @@
         <item name="android:textSize">21sp</item>
     </style>
 
+    <style name="ScanInput">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_width">200dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
 </resources>

@@ -109,6 +109,9 @@ the specific language governing permissions and limitations under the License.
             android:name=".activities.MainMenuActivity"
             android:configChanges="locale|orientation|screenSize" />
         <activity
+            android:name=".activities.LoginActivity"
+            android:configChanges="locale|orientation|screenSize" />
+        <activity
             android:name=".activities.ScannerWithFlashlightActivity"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
