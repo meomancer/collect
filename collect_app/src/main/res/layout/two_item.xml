@@ -10,6 +10,7 @@
     android:paddingTop="4dip">
 
     <TextView
+        style="@style/ScanBlackTextStyle"
         android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,6 +23,7 @@
         android:layout_toStartOf="@+id/visible_off" />
 
     <TextView
+        style="@style/ScanBlackTextStyle"
         android:id="@+id/text3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,6 +34,7 @@
         android:visibility="gone" />
 
     <TextView
+        style="@style/ScanBlackTextStyle"
         android:id="@+id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,6 +47,7 @@
         android:layout_toStartOf="@+id/visible_off" />
 
     <TextView
+        style="@style/ScanBlackTextStyle"
         android:id="@+id/text4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
