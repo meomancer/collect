@@ -33,7 +33,10 @@ import org.odk.collect.android.application.Collect;
 import org.odk.collect.android.preferences.PreferenceKeys;
 import org.odk.collect.android.utilities.WebCredentialsUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -89,8 +92,30 @@ public class LoginActivity extends CollectAbstractActivity {
         byte[] basicAuth = Base64.encode(usernamePassword, Base64.DEFAULT);
         String text = new String(basicAuth, "UTF-8");
         conn.setRequestProperty("Authorization", "basic " + text);
+        Log.i(LoginActivity.class.toString(), conn.getResponseCode() + "");
         conn.connect();
-        return conn.getResponseMessage() + "";
+
+        int responseCode = conn.getResponseCode();
+        String result = "Not OK";
+        if (responseCode == 200) {
+            result = "OK";
+        } else if (responseCode == 401) {
+            InputStream errorstream = conn.getErrorStream();
+            if (errorstream != null) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(errorstream));
+                String response = "";
+                String tempString;
+                while ((tempString = br.readLine()) != null) {
+                    response += tempString;
+                }
+                Log.i(LoginActivity.class.toString(), response);
+                boolean isFound = response.indexOf("Using basic authentication without HTTPS") != -1 ? true : false;
+                if (isFound) {
+                    result = "OK";
+                }
+            }
+        }
+        return result;
     }
 
 
@@ -127,7 +152,10 @@ public class LoginActivity extends CollectAbstractActivity {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString(PreferenceKeys.KEY_USERNAME, username);
                 editor.putString(PreferenceKeys.KEY_PASSWORD, password);
-                editor.putString(PreferenceKeys.KEY_SERVER_URL, getString(R.string.default_server_url));
+                editor.putString(
+                        PreferenceKeys.KEY_SERVER_URL,
+                        getString(R.string.default_server_url) + '/' + username
+                );
                 editor.commit();
 
                 Collect.getInstance().getActivityLogger()
