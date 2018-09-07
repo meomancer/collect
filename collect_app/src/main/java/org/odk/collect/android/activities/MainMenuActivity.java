@@ -235,13 +235,13 @@ public class MainMenuActivity extends CollectAbstractActivity {
             createErrorDialog(e.getMessage(), EXIT);
             return;
         }
-
         {
             // dynamically construct the "ODK Collect vA.B" string
             TextView mainMenuMessageLabel = findViewById(R.id.main_menu_header);
             mainMenuMessageLabel.setText(Collect.getInstance()
                     .getVersionedAppName());
         }
+
 
         File f = new File(Collect.ODK_ROOT + "/collect.settings");
         File j = new File(Collect.ODK_ROOT + "/collect.settings.json");
@@ -326,7 +326,9 @@ public class MainMenuActivity extends CollectAbstractActivity {
 
     private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setTitle(getString(R.string.main_menu));
+        setTitle(null);
+        toolbar.setNavigationIcon(null);
+        toolbar.setBackgroundColor(0x00000000);
         setSupportActionBar(toolbar);
     }
 
