@@ -148,7 +148,7 @@ public class LoginActivity extends CollectAbstractActivity {
                 editor.putString(PreferenceKeys.KEY_PASSWORD, password);
                 editor.putString(
                         PreferenceKeys.KEY_SERVER_URL,
-                        getString(R.string.default_server_url) + '/' + username
+                        getString(R.string.default_server_url)
                 );
                 editor.commit();
 
