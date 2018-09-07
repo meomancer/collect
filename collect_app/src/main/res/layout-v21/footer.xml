@@ -10,17 +10,9 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:src="@drawable/logo_scanterra" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="powered by open data kit (odk)"
-            android:textColor="#AAFFFFFF"
-            android:textSize="8sp" />
     </LinearLayout>
 </merge>

@@ -19,6 +19,7 @@ limitations under the License.
     <item
         android:id="@+id/menu_about"
         android:title="@string/about_preferences"
+        android:visible="false"
         app:showAsAction="never"/>
 
     <item
