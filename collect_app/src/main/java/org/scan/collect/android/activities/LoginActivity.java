@@ -76,6 +76,12 @@ public class LoginActivity extends CollectAbstractActivity {
                         getString(R.string.default_server_url) + "/formList");
             }
         });
+        {
+            // dynamically construct the "ODK Collect vA.B" string
+            TextView mainMenuMessageLabel = findViewById(R.id.main_menu_header);
+            mainMenuMessageLabel.setText(Collect.getInstance()
+                    .getVersionedAppName());
+        }
     }
 
     private String HttpLogin(String myUrl, String username, String password) throws IOException, JSONException {

@@ -12,7 +12,6 @@ the specific language governing permissions and limitations under the License. -
     <string name="protocol_google_sheets" translatable="false">google_sheets</string>
     <string name="protocol_other" translatable="false">other_protocol</string>
     <string name="default_server_url" translatable="false">http://test.scancollect.scanterra.com</string>
-    <!--<string name="default_server_url" translatable="false">https://kc.kobotoolbox.org</string>-->
     <string name="default_odk_formlist" translatable="false">/formList</string>
     <string name="default_odk_submission" translatable="false">/submission</string>
     <string name="sms_submission_preference_key" translatable="false">sms_preference</string>
