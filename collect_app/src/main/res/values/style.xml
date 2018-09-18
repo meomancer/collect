@@ -71,4 +71,8 @@
         <item name="android:padding">10dp</item>
     </style>
 
+    <style name="ScanCheckbox"  parent="@style/ScanInput">
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="buttonTint">@android:color/white</item>
+    </style>
 </resources>

@@ -13,6 +13,7 @@ public final class PreferenceKeys {
     public static final String KEY_SERVER_URL               = "server_url";
     public static final String KEY_USERNAME                 = "username";
     public static final String KEY_PASSWORD                 = "password";
+    public static final String KEY_REMEMBER_ME              = "remember_me";
 
     // form_management_preferences.xml
     public static final String KEY_AUTOSEND                 = "autosend";

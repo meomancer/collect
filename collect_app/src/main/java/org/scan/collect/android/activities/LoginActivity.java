@@ -25,6 +25,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -50,6 +51,7 @@ public class LoginActivity extends CollectAbstractActivity {
     private TextInputEditText usernameEditText;
     private TextInputEditText passwordEditText;
     private TextView errorAuth;
+    private CheckBox rememberMe;
 
     public static void startActivityAndCloseAllOthers(Activity activity) {
         activity.startActivity(new Intent(activity, LoginActivity.class));
@@ -66,13 +68,25 @@ public class LoginActivity extends CollectAbstractActivity {
         passwordEditText = findViewById(R.id.password_edit);
         errorAuth = findViewById(R.id.errorAuth);
         loginButton = findViewById(R.id.login);
+        rememberMe = findViewById(R.id.remember_me);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Boolean rememberMePref = preferences.getBoolean(PreferenceKeys.KEY_REMEMBER_ME, false);
+        String username = preferences.getString(PreferenceKeys.KEY_USERNAME, "");
+        String password = preferences.getString(PreferenceKeys.KEY_PASSWORD, "");
+        // Redirect into main menu if remember me and has username
+        if (rememberMePref && !username.isEmpty()) {
+            new LoginCheck(username, password, rememberMe.isChecked()).goToMenu();
+        }
+
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 errorAuth.setVisibility(View.GONE);
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                new LoginCheck(username, password).execute(
+                new LoginCheck(username, password,rememberMe.isChecked()).execute(
                         getString(R.string.default_server_url) + "/formList");
             }
         });
@@ -118,14 +132,37 @@ public class LoginActivity extends CollectAbstractActivity {
         return result;
     }
 
-
     private class LoginCheck extends AsyncTask<String, Void, String> {
         String username;
         String password;
+        Boolean rememberMe;
 
-        public LoginCheck(String inputUsername, String inputPassword) {
+        public LoginCheck(String inputUsername, String inputPassword, Boolean inputRememberMe) {
             username = inputUsername;
             password = inputPassword;
+            rememberMe = inputRememberMe;
+        }
+
+        public void goToMenu() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+            //or set the values.
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(PreferenceKeys.KEY_USERNAME, username);
+            editor.putString(PreferenceKeys.KEY_PASSWORD, password);
+            editor.putString(
+                    PreferenceKeys.KEY_SERVER_URL,
+                    getString(R.string.default_server_url)
+            );
+            editor.putBoolean(PreferenceKeys.KEY_REMEMBER_ME, rememberMe);
+            editor.commit();
+
+            Collect.getInstance().getActivityLogger()
+                    .logAction(this, "login", "click");
+            Intent i = new Intent(getApplicationContext(),
+                    MainMenuActivity.class);
+            startActivity(i);
+            finish();
         }
 
         @Override
@@ -146,24 +183,7 @@ public class LoginActivity extends CollectAbstractActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result.equals("OK")) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-                //or set the values.
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(PreferenceKeys.KEY_USERNAME, username);
-                editor.putString(PreferenceKeys.KEY_PASSWORD, password);
-                editor.putString(
-                        PreferenceKeys.KEY_SERVER_URL,
-                        getString(R.string.default_server_url)
-                );
-                editor.commit();
-
-                Collect.getInstance().getActivityLogger()
-                        .logAction(this, "login", "click");
-                Intent i = new Intent(getApplicationContext(),
-                        MainMenuActivity.class);
-                startActivity(i);
-                finish();
+                this.goToMenu();
             } else {
                 errorAuth.setVisibility(View.VISIBLE);
             }

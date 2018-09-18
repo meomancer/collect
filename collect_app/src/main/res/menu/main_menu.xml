@@ -32,4 +32,9 @@ limitations under the License.
         android:title="@string/admin_preferences"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/menu_logout_preferences"
+        android:title="@string/logout"
+        app:showAsAction="never"/>
+
 </menu>

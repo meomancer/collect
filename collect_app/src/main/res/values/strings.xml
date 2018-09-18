@@ -95,6 +95,7 @@
     <string name="list_failed_with_error">Form listing failed. %s.</string>
     <string name="login_error">Incorrect username or password</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="loading_form">Loading Form</string>
     <string name="load_remote_form_error">Error Getting Form List</string>
     <string name="location_provider_accuracy">Using %1$s. Accuracy is %2$s m.</string>
@@ -120,6 +121,7 @@
     <string name="quit_application">Exit %s</string>
     <string name="quit_entry">Save Form and Exit</string>
     <string name="refresh">Refresh</string>
+    <string name="remember_me">Remember Me</string>
     <string name="replace_barcode">Replace Barcode</string>
     <string name="required_answer_error">Sorry, this response is required!</string>
     <string name="review_data">Edit Saved Form</string>
