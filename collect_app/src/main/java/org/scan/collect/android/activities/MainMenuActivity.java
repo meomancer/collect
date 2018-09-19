@@ -449,8 +449,6 @@ public class MainMenuActivity extends CollectAbstractActivity {
             case R.id.menu_logout_preferences:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(PreferenceKeys.KEY_USERNAME, "");
-                editor.putString(PreferenceKeys.KEY_PASSWORD, "");
                 editor.putString(
                         PreferenceKeys.KEY_SERVER_URL,
                         getString(R.string.default_server_url)

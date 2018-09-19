@@ -51,7 +51,6 @@ public class LoginActivity extends CollectAbstractActivity {
     private TextInputEditText usernameEditText;
     private TextInputEditText passwordEditText;
     private TextView errorAuth;
-    private CheckBox rememberMe;
 
     public static void startActivityAndCloseAllOthers(Activity activity) {
         activity.startActivity(new Intent(activity, LoginActivity.class));
@@ -68,7 +67,6 @@ public class LoginActivity extends CollectAbstractActivity {
         passwordEditText = findViewById(R.id.password_edit);
         errorAuth = findViewById(R.id.errorAuth);
         loginButton = findViewById(R.id.login);
-        rememberMe = findViewById(R.id.remember_me);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Boolean rememberMePref = preferences.getBoolean(PreferenceKeys.KEY_REMEMBER_ME, false);
@@ -76,7 +74,7 @@ public class LoginActivity extends CollectAbstractActivity {
         String password = preferences.getString(PreferenceKeys.KEY_PASSWORD, "");
         // Redirect into main menu if remember me and has username
         if (rememberMePref && !username.isEmpty()) {
-            new LoginCheck(username, password, rememberMe.isChecked()).goToMenu();
+            new LoginCheck(username, password).goToMenu();
         }
 
 
@@ -84,10 +82,14 @@ public class LoginActivity extends CollectAbstractActivity {
             @Override
             public void onClick(View v) {
                 errorAuth.setVisibility(View.GONE);
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                new LoginCheck(username, password,rememberMe.isChecked()).execute(
-                        getString(R.string.default_server_url) + "/formList");
+                String usernameInEdit = usernameEditText.getText().toString();
+                String passwordInEdit = passwordEditText.getText().toString();
+                if (usernameInEdit.equals(username) && passwordInEdit.equals(password)) {
+                    new LoginCheck(username, password).goToMenu();
+                } else {
+                    new LoginCheck(usernameInEdit, passwordInEdit).execute(
+                            getString(R.string.default_server_url) + "/formList");
+                }
             }
         });
         {
@@ -135,12 +137,10 @@ public class LoginActivity extends CollectAbstractActivity {
     private class LoginCheck extends AsyncTask<String, Void, String> {
         String username;
         String password;
-        Boolean rememberMe;
 
-        public LoginCheck(String inputUsername, String inputPassword, Boolean inputRememberMe) {
+        public LoginCheck(String inputUsername, String inputPassword) {
             username = inputUsername;
             password = inputPassword;
-            rememberMe = inputRememberMe;
         }
 
         public void goToMenu() {
@@ -154,7 +154,7 @@ public class LoginActivity extends CollectAbstractActivity {
                     PreferenceKeys.KEY_SERVER_URL,
                     getString(R.string.default_server_url)
             );
-            editor.putBoolean(PreferenceKeys.KEY_REMEMBER_ME, rememberMe);
+            editor.putBoolean(PreferenceKeys.KEY_REMEMBER_ME, true);
             editor.commit();
 
             Collect.getInstance().getActivityLogger()
